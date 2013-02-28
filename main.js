@@ -78,13 +78,11 @@ function OCR () {
     this.draw = function (e) {
         var x = e.pageX-cX;
         var y = e.pageY-cY;
-
-
-
+    
         context.beginPath();
         context.moveTo(px, py);
         context.lineTo(x, y); 
-        context.lineWidth = 30;                        
+        context.lineWidth = 40;                        
         // context.strokeStyle = "#000000";               
         context.lineCap = "round";                     
         context.stroke(); 
@@ -103,7 +101,7 @@ function OCR () {
             
         context.fillStyle = '#000000';
         context.beginPath();
-        context.arc(x, y, 15, 0, Math.PI*2, false); 
+        context.arc(x, y, 20, 0, Math.PI*2, false); 
         context.closePath(); 
         context.fill(); 
             
@@ -117,7 +115,7 @@ function OCR () {
 
         if (l == 0 && !c) {
             clearInterval(timer);
-            context.clearRect(0,0,w,h);
+            this.recognize();
         }
         if(l == lmax && !c){
             clearInterval(timer);
@@ -137,6 +135,15 @@ function OCR () {
             context.fillStyle = gradient;
             context.fillRect(0,0,i,3);
     };
+
+    this.recognize = function () {
+        this.cut();
+        context.clearRect(0,0,w,h);
+    };
+
+    this.cut = function(){
+        alert('cut');
+    };            
 
     this.mouseup = function(e) {
         c = false;
