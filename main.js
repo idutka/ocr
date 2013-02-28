@@ -20,7 +20,6 @@ window.onload = function(){
     
     var pole = new OCR();
         pole.setContext(context);
-        // pole.setCanvasXY(canvas.offsetLeft,canvas.offsetTop);
         pole.setSize(canvas.width,canvas.height);
 
         
@@ -57,6 +56,7 @@ function OCR () {
     var context;
     var cX = 0,cY = 50;
     var h = 0,w = 0;
+    var px = 0, py = 0;
 
     this.setContext = function(c){
         context = c;
@@ -76,14 +76,38 @@ function OCR () {
     };
 
     this.draw = function (e) {
-            var x = e.pageX-cX;
-            var y = e.pageY-cY;
-            context.fillStyle = '#000';
-            context.beginPath();
-            context.arc(x, y, 15, 0, Math.PI*2, false); 
-            context.closePath(); 
-            context.fill(); 
+        var x = e.pageX-cX;
+        var y = e.pageY-cY;
+
+
+
+        context.beginPath();
+        context.moveTo(px, py);
+        context.lineTo(x, y); 
+        context.lineWidth = 30;                        
+        // context.strokeStyle = "#000000";               
+        context.lineCap = "round";                     
+        context.stroke(); 
+
+        px = x;
+        py = y;
+
     };
+
+    this.drawpointer = function (e) {
+        var x = e.pageX-cX;
+        var y = e.pageY-cY;
+ 
+        px = x;
+        py = y;
+            
+        context.fillStyle = '#000000';
+        context.beginPath();
+        context.arc(x, y, 15, 0, Math.PI*2, false); 
+        context.closePath(); 
+        context.fill(); 
+            
+    }
 
     this.timetik = function (d) {
         l += w*d/40;
@@ -123,15 +147,16 @@ function OCR () {
         clearInterval(timer);
         var _this = this; 
         timer = setInterval(function() { _this.timetik(1) },10);
+        this.drawpointer(e);
     };
 
     this.click = function(e) {
-        this.draw(e);
+        
     };
 
     this.mousemove = function(e) {
         if(c){
-            this.draw(e);
+           this.draw(e);
         }
     };
 
