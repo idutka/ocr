@@ -138,11 +138,25 @@ function OCR () {
 
     this.recognize = function () {
         this.cut();
-        context.clearRect(0,0,w,h);
+        //context.clearRect(0,0,w,h);
     };
 
     this.cut = function(){
-        alert('cut');
+
+        var imgd = context.createImageData(w,h);
+        var pix = imgd.data;
+ 
+        var l = pix.length;
+        for(var j = 0; j < 10; j++){
+            for (var i = 0; i < 10; i++) {
+                console.log(j*10*4+i*4);
+                //pix[j*i*4-4] = 127; // alpha channel
+            }
+        }
+
+        context.putImageData(imgd, 0, 0);
+
+        //alert('cut');
     };            
 
     this.mouseup = function(e) {
