@@ -75,6 +75,11 @@ display: none;
 	height: 100%;
 }
 
+#mini {
+	height: 50px;
+	width: 50%;
+}
+
 /*html { position: relative; }  Фикс для оперы 
 html, body {
 height: 100%;

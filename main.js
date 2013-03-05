@@ -57,6 +57,7 @@ function OCR () {
     var cX = 0,cY = 50;
     var h = 0,w = 0;
     var px = 0, py = 0;
+    var size = Array();
 
     this.setContext = function(c){
         context = c;
@@ -138,25 +139,54 @@ function OCR () {
 
     this.recognize = function () {
         this.cut();
-        //context.clearRect(0,0,w,h);
+        context.clearRect(0,0,w,h);
     };
 
     this.cut = function(){
 
-        var imgd = context.createImageData(w,h);
+        var imgd = context.getImageData(0, 0, w, h);
         var pix = imgd.data;
- 
-        var l = pix.length;
-        for(var j = 0; j < 10; j++){
-            for (var i = 0; i < 10; i++) {
-                console.log(j*10*4+i*4);
-                //pix[j*i*4-4] = 127; // alpha channel
+
+        size.t = h;
+        size.b = 0;
+        size.l = w;
+        size.r = 0;
+
+        var m = false;
+
+        for(var i = 0; i < w; i++){
+
+            for(var j = 0; j < h; j++){
+                var n = (j*w+i)*4;
+                if (pix[n+3] > 100) {
+                    if (size.t > j) {
+                        size.t = j;
+                    };
+                    if (size.b < j) {
+                        size.b = j;
+                    };
+                    if (size.l > i) {
+                        size.l = i;
+                    };
+                    if (size.r < i) {
+                        size.r = i;
+                    };
+
+                    m = true;
+                };
             }
+            // if(m){console.log(i)};
+            m = false;
         }
 
-        context.putImageData(imgd, 0, 0);
+        // console.log(size.t,size.b,size.l,size.r);
 
-        //alert('cut');
+        // var can = document.getElementById('mini');
+        // var can2 = document.getElementById('pole');
+        // var ctx = can.getContext('2d');
+
+        // ctx.drawImage(can2, 0, 0, 50, 200);
+
     };            
 
     this.mouseup = function(e) {
