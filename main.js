@@ -179,13 +179,23 @@ function OCR () {
             m = false;
         }
 
-        // console.log(size.t,size.b,size.l,size.r);
+        console.log(size.t,size.b,size.l,size.r);
 
-        // var can = document.getElementById('mini');
-        // var can2 = document.getElementById('pole');
-        // var ctx = can.getContext('2d');
 
-        // ctx.drawImage(can2, 0, 0, 50, 200);
+
+        var can = document.getElementById('mini');
+        var can2 = document.getElementById('pole');
+        var ctx = can.getContext('2d');
+
+        var mw =  size.r - size.l+1;
+        var mh =  size.b - size.t+1;
+        var ch = 50;   
+        var cw = ch*mw/mh;     
+
+        can.width  = cw;
+        can.height = ch;
+
+        ctx.drawImage(can2, size.l, size.t, mw, mh, 0, 0, cw, ch);
 
     };            
 
