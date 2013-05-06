@@ -1,11 +1,6 @@
-document.onmousewheel = function (e) {
-  // e.preventDefault();
-}
-
-
 window.onload = function(){
 
-	var panelHeight = 50;
+    var panelHeight = 50;
 
     var canvas = document.getElementById('pole');
     var bg = document.getElementById('canva');
@@ -14,7 +9,6 @@ window.onload = function(){
         canvas.height = bg.offsetHeight - 50;
 
     document.getElementById('fonr').style.display = 'none';
-
 
     var context = canvas.getContext('2d');
     
@@ -44,8 +38,24 @@ window.onload = function(){
     };
 
 
+    document.getElementById('enter').onclick = function(e) {
+        var t = document.getElementById('text').value;
+        document.getElementById('search').value = t;
+        document.getElementById('fonr').style.display = 'none';
+    }
+
+    document.getElementById('clear').onclick = function(e) {
+        document.getElementById('text').value = '';
+    }
+
 }
 
+function map() {
+    this.char = '-';
+    this.p = [];
+    this.width = 30;
+    this.height = 30;
+}
 
 function OCR () {
 
@@ -62,12 +72,6 @@ function OCR () {
     this.setContext = function(c){
         context = c;
     };
-
-    // this.setCanvasXY = function(x,y){
-    // 	console.log(x,y);
-    //     cX = x;
-    //     cY = y;
-    // };
 
     this.setSize = function(w1,h1){
         w = w1;
@@ -175,13 +179,8 @@ function OCR () {
                     m = true;
                 };
             }
-            // if(m){console.log(i)};
             m = false;
         }
-
-        console.log(size.t,size.b,size.l,size.r);
-
-
 
         var can = document.getElementById('mini');
         var can2 = document.getElementById('pole');
@@ -189,15 +188,89 @@ function OCR () {
 
         var mw =  size.r - size.l+1;
         var mh =  size.b - size.t+1;
-        var ch = 50;   
-        var cw = ch*mw/mh;     
+        var ch = 30;   
+        var cw = Math.round(ch*mw/mh);     
 
         can.width  = cw;
         can.height = ch;
 
+        if(mh < 50){
+            console.log('error');
+            return;
+        }
+
         ctx.drawImage(can2, size.l, size.t, mw, mh, 0, 0, cw, ch);
 
-    };            
+        var imgd = ctx.getImageData(0, 0, cw, ch);
+        var pix = imgd.data;
+        
+        var p = [];
+        for(var j = 0; j < ch; j++){
+            p[j] = [];
+            for(var i = 0; i < cw; i++){
+                var n = (j*cw+i)*4;
+                if (pix[n+3] > 100) {
+                    p[j][i] = '1';
+                }else{
+                    p[j][i] = '0';
+                };
+            }
+        }
+
+        var m = new map;
+            m.p = p;
+            m.width = cw;
+            m.height = ch;
+        // console.log(JSON.stringify(m));
+        var c = this.getChar(m);
+
+        var t = document.getElementById('text');
+            t.value = t.value + c;
+
+    };      
+
+    this.getChar = function(m) {
+        var k = 0;
+        var c = '';
+        for (var i = 0; i < maps.length; i++) {
+            var kk = this.www(m,maps[i]);
+            if(kk > k){
+                k = kk;
+                c = maps[i].char;
+            };
+        };
+        console.log(c,k);
+        return c;
+    }
+
+    this.www = function(m1, m2) {
+        var k = 0;
+        var p1 = m1.p;
+        var p2 = m2.p;
+
+        if((m1.width*2 < m2.width) || (m1.width/2 > m2.width)){
+            return 0;
+        }
+
+        for (var h = 1; h < m1.height-1; h++) {
+            for (var w = 1; w < m1.width-1; w++) {
+                var w2 = Math.round(w*m2.width/m1.width);
+                if(p1[h][w] == p2[h][w2]){
+                    k+=5;
+                }else{
+                    if(p2[h][w2] == '1'){
+                        if(p1[h][w+1] == '1'){ k++; }else{ k--;}
+                        if(p1[h][w-1] == '1'){ k++; }else{ k--;}
+                        if(p1[h+1][w] == '1'){ k++; }else{ k--;}
+                        if(p1[h-1][w] == '1'){ k++; }else{ k--;}
+                    }
+                    // k-=1;
+                }
+            };
+        };
+
+        return (k*100) / (5*m1.height*m1.width);
+    }      
 
     this.mouseup = function(e) {
         c = false;
