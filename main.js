@@ -45,7 +45,7 @@ window.onload = function(){
     }
 
     document.getElementById('clear').onclick = function(e) {
-        document.getElementById('text').value = '';
+        document.getElementById('text').value = document.getElementById('text').value.slice(0,-1);
     }
 
 }
